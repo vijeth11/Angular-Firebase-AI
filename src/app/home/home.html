@@ -1,0 +1,54 @@
+<!-- Main Content Area -->
+<div class="container-fluid" style="height: calc(100vh - 70px)">
+  <div class="row h-100">
+    <!-- Product List (70%) -->
+    <div class="col-8 d-flex flex-column" style="height: 100%">
+      <div class="product-list-scrollable flex-grow-1">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          @for(product of products; track product.name){
+          <div class="col">
+            <app-product-card
+              [product]="product"
+              (addToCart)="onAddToCart($event)"
+            >
+            </app-product-card>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Section (30%) -->
+    <div
+      class="col-4 bg-light border-start d-flex flex-column"
+      style="height: 100%"
+    >
+      <div class="chat-messages flex-grow-1 overflow-auto p-3">
+        @for(msg of messages; track msg){
+        <div
+          class="mb-2 d-flex"
+          [ngClass]="{'justify-content-end':msg.from == 'User','justify-content-start':msg.from=='AI'}"
+        >
+          <div
+            class="alert w-75"
+            [ngClass]="{'alert-primary':msg.from == 'User','alert-warning':msg.from=='AI'}"
+          >
+            {{ msg.message }}
+          </div>
+        </div>
+        }
+      </div>
+      <div class="p-3 border-top">
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="newMessage"
+            placeholder="Type message..."
+          />
+          <button class="btn btn-success" (click)="sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

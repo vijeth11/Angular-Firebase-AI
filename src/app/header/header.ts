@@ -1,16 +1,18 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-header',
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './header.html',
   styleUrl: './header.css'
 })
 export class Header {
   @Input() cartCount: number = 0;
+  private router = inject(Router);
 
   onCartClick() {
     // Implement cart click logic (e.g., open cart sidebar or modal)
-    alert('Cart clicked!');
+    this.router.navigate(['/cart']);
   }
 }
