@@ -1,0 +1,52 @@
+<div class="card product-card">
+  <div class="card-header">
+    <h5 class="card-title">{{ product.name }}</h5>
+  </div>
+  <div
+    class="card-body d-flex flex-column justify-content-center align-items-center h-100"
+  >
+    <div class="card-inner">
+      <!-- Front Side -->
+      <div class="card-front">
+        <img
+          [src]="product.image"
+          class="card-img-top"
+          [alt]="product.name"
+          width="300"
+          height="300"
+        />
+      </div>
+      <!-- Back Side -->
+      <div class="card-back">
+        <h6>Description</h6>
+        <p class="text-center">{{ product.description }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <div class="d-flex align-items-center mb-2">
+      <span class="text-success h5 mb-0 me-3">${{ product.price }}</span>
+      <div class="input-group quantity-group">
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          (click)="decrement()"
+          [disabled]="quantity <= 1"
+        >
+          -
+        </button>
+        <input
+          type="number"
+          class="form-control text-center"
+          [value]="quantity"
+          readonly
+        />
+        <button class="btn btn-outline-secondary btn-sm" (click)="increment()">
+          +
+        </button>
+      </div>
+    </div>
+    <button class="btn btn-warning w-100" (click)="addToCartClicked()">
+      Add to Cart
+    </button>
+  </div>
+</div>

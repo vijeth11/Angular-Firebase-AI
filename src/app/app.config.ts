@@ -12,9 +12,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideFirebaseApp(() => firebaseApp,
+    provideFirebaseApp(()=> firebaseApp),
     {
-      provide: 'FIREBASE_APP',useValue:firebaseApp
-    })
+      provide: "FIREBASE_APP", useValue: firebaseApp
+    }
   ]
 };

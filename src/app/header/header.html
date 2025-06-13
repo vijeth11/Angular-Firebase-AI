@@ -1,0 +1,26 @@
+<nav class="navbar navbar-expand-lg groceries-header">
+  <div class="container-fluid">
+    <span class="navbar-brand fw-bold fs-3 text-white">
+      <img
+        src="https://img.icons8.com/color/48/000000/grocery-bag.png"
+        alt="Groceries"
+        width="40"
+        class="me-2 align-bottom"
+      />
+      Angular Groceries
+    </span>
+    <button
+      class="btn btn-light position-relative ms-auto"
+      (click)="onCartClick()"
+    >
+      <i class="bi bi-cart-fill text-orange"></i>
+      @if(cartCount > 0){
+      <span
+        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+      >
+        {{ cartCount }}
+      </span>
+      } Cart
+    </button>
+  </div>
+</nav>

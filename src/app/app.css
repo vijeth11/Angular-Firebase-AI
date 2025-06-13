@@ -1,0 +1,18 @@
+/* app.component.css */
+.product-list-scrollable {
+  height: 100%;
+  overflow-y: auto;
+  padding: 1rem;
+  background: #f7f7f7;
+}
+
+body,
+html,
+app-root {
+  height: 100%;
+  margin: 0;
+}
+
+.container-fluid {
+  height: 100%;
+}
