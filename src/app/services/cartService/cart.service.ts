@@ -1,30 +1,41 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
-import { CartItem } from "../../models/cartItem";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { CartItem } from '../../models/cartItem';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
+export class CartService {
+  private cartItems: BehaviorSubject<CartItem[]> = new BehaviorSubject<
+    CartItem[]
+  >([]);
 
-export class CartService{
-  private cartItems:BehaviorSubject<CartItem[]> = new BehaviorSubject<CartItem[]>([]);
-
-  getCartItems():Observable<CartItem[]> {
+  getCartItems(): Observable<CartItem[]> {
     return this.cartItems.asObservable();
   }
 
-  addToCart(item:CartItem) {
+  addToCart(item: CartItem) {
     const cartItems = this.cartItems.getValue();
     cartItems.push(item);
     this.cartItems.next(cartItems);
   }
 
-  resetCart(items:CartItem[]) {
+  updateCartItem(id: number, quantity: number) {
+    const cartItems = this.cartItems.getValue();
+    const index = cartItems.findIndex((x) => x.id === id);
+    if (index !== -1) {
+      cartItems[index].quantity = quantity;
+      this.cartItems.next(cartItems);
+    }
+  }
+
+  resetCart(items: CartItem[]) {
     this.cartItems.next(items);
   }
-  removeFromCart(item:CartItem) {
+
+  removeFromCart(id: number) {
     const cartItems = this.cartItems.getValue();
-    const index = cartItems.indexOf(item);
+    const index = cartItems.findIndex((item) => item.id === id);
     if (index !== -1) {
       cartItems.splice(index, 1);
       this.cartItems.next(cartItems);
