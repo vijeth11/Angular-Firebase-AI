@@ -24,7 +24,7 @@
       style="height: 100%"
     >
       <div class="chat-messages flex-grow-1 overflow-auto p-3">
-        @for(msg of messages; track msg){
+        @for(msg of messages(); track msg){
         <div
           class="mb-2 d-flex"
           [ngClass]="{'justify-content-end':msg.from == 'User','justify-content-start':msg.from=='AI'}"

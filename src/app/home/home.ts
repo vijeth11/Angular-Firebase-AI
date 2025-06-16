@@ -1,4 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { PRODUCTS, Product } from '../models/products';
 import { ProductCard } from '../product-card/product-card';
 import { CartService } from '../services/cartService/cart.service';
@@ -12,20 +18,23 @@ import { Ai } from '../services/ai/ai';
   styleUrls: ['./home.css'],
   imports: [ProductCard, FormsModule, CommonModule],
 })
-export class HomeComponent implements OnInit {
-  async ngOnInit(): Promise<void> {
+export class HomeComponent implements AfterViewInit {
+  async ngAfterViewInit(): Promise<void> {
     this.aiService.startConversation();
     this.aiService.startChat();
     await this.aiService.sendMessage(
       'give me the list of products with detailed information'
     );
-    this.messages.push({
-      from: 'AI',
-      message: 'Hello! How can I help you today?',
-    });
+    this.messages.update((x) => [
+      ...x,
+      {
+        from: 'AI',
+        message: 'Hello! How can I help you today?',
+      },
+    ]);
   }
 
-  messages: { from: 'AI' | 'User'; message: string }[] = [];
+  messages = signal<{ from: 'AI' | 'User'; message: string }[]>([]);
   newMessage = signal('');
   public products = PRODUCTS;
   private cartService = inject(CartService);
@@ -44,10 +53,10 @@ export class HomeComponent implements OnInit {
   async sendMessage() {
     if (this.newMessage().trim()) {
       const message = this.newMessage().trim();
-      this.messages.push({ from: 'User', message });
+      this.messages.update((x) => [...x, { from: 'User', message }]);
       this.newMessage.set('');
       const response = await this.aiService.sendMessage(message);
-      this.messages.push({ from: 'AI', message: response });
+      this.messages.update((x) => [...x, { from: 'AI', message: response }]);
     }
   }
 }
