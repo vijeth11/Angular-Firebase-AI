@@ -13,17 +13,19 @@ import { Ai } from '../services/ai/ai';
   imports: [ProductCard, FormsModule, CommonModule],
 })
 export class HomeComponent implements OnInit {
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.aiService.startConversation();
     this.aiService.startChat();
-    this.aiService.sendMessage(
+    await this.aiService.sendMessage(
       'give me the list of products with detailed information'
     );
+    this.messages.push({
+      from: 'AI',
+      message: 'Hello! How can I help you today?',
+    });
   }
 
-  messages: { from: 'AI' | 'User'; message: string }[] = [
-    { from: 'AI', message: 'Hello! How can I help you today?' },
-  ];
+  messages: { from: 'AI' | 'User'; message: string }[] = [];
   newMessage = signal('');
   public products = PRODUCTS;
   private cartService = inject(CartService);
