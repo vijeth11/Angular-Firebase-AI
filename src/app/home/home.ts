@@ -43,9 +43,9 @@ export class HomeComponent implements OnInit {
     if (this.newMessage().trim()) {
       const message = this.newMessage().trim();
       this.messages.push({ from: 'User', message });
+      this.newMessage.set('');
       const response = await this.aiService.sendMessage(message);
       this.messages.push({ from: 'AI', message: response });
-      this.newMessage.set('');
     }
   }
 }

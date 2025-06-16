@@ -45,6 +45,7 @@
             class="form-control"
             [(ngModel)]="newMessage"
             placeholder="Type message..."
+            (keyup.enter)="sendMessage()"
           />
           <button class="btn btn-success" (click)="sendMessage()">Send</button>
         </div>
