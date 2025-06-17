@@ -24,12 +24,7 @@ export interface Message {
 export class Ai {
   private model: GenerativeModel | undefined;
   chat: ChatSession | undefined;
-  private chatMessages = new BehaviorSubject<Message[]>([
-    {
-      from: 'AI',
-      message: 'Hello! How can I help you today?',
-    },
-  ]);
+  private chatMessages = new BehaviorSubject<Message[]>([]);
 
   constructor(
     @Inject('FIREBASE_APP') private firebaseApp: FirebaseApp,
@@ -84,6 +79,12 @@ export class Ai {
   public startChat() {
     if (this.model) {
       this.chat = this.model.startChat();
+      this.chatMessages.next([
+        {
+          from: 'AI',
+          message: 'Hello! How can I help you today?',
+        },
+      ]);
     }
   }
 
