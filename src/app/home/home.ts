@@ -1,9 +1,7 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   inject,
-  OnDestroy,
   signal,
   ViewChild,
 } from '@angular/core';
@@ -13,7 +11,7 @@ import { CartService } from '../services/cartService/cart.service';
 import { FormsModule } from '@angular/forms';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Ai, Message } from '../services/ai/ai';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +19,7 @@ import { Observable, Subscription } from 'rxjs';
   styleUrls: ['./home.css'],
   imports: [ProductCard, FormsModule, CommonModule, AsyncPipe],
 })
-export class HomeComponent implements AfterViewInit, OnDestroy {
+export class HomeComponent {
   isLoading = signal(false);
   @ViewChild('chatContainer') chatContainer!: ElementRef;
   messages!: Observable<Message[]>;
@@ -29,24 +27,12 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   public products = PRODUCTS;
   private cartService = inject(CartService);
   private aiService = inject(Ai);
-  private messageSubscription$: Subscription | undefined;
 
-  ngAfterViewInit(): void {
+  constructor() {
     this.messages = this.aiService.getMessages();
-    this.messageSubscription$ = this.messages.subscribe((messages) => {
-      if (messages.length == 0) {
-        this.isLoading.set(true);
-      } else {
-        this.isLoading.set(false);
-        this.scrollToBottom();
-        if (this.messageSubscription$) this.messageSubscription$.unsubscribe();
-        this.messageSubscription$ = undefined;
-      }
+    setTimeout(() => {
+      this.scrollToBottom();
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.messageSubscription$) this.messageSubscription$.unsubscribe();
   }
 
   onAddToCart(event: { product: Product; quantity: number }) {

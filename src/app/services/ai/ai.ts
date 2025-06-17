@@ -124,16 +124,19 @@ export class Ai {
               result = this.cartService.resetCart();
               break;
             case functionDescription.functionDeclarations![3].name:
+              let data = call.args as { id: number; quantity: number };
+              result = this.cartService.updateCartItem(data.id, data.quantity);
+              break;
+            case functionDescription.functionDeclarations![4].name:
               result = this.cartService.removeFromCart(
                 (call.args as { id: number }).id
               );
               break;
-            case functionDescription.functionDeclarations![4].name:
-              let data = call.args as { id: number; quantity: number };
-              result = this.cartService.updateCartItem(data.id, data.quantity);
-              break;
             case functionDescription.functionDeclarations![5].name:
               result = this.cartService.addToCart(call.args as CartItem);
+              break;
+            case functionDescription.functionDeclarations![6].name:
+              result = this.cartService.getCartItemsTotalCost();
               break;
           }
           functionResult.push(result);

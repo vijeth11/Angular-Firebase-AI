@@ -27,7 +27,9 @@ export class CartService {
     const cartItems = this.cartItems.getValue();
     const index = cartItems.findIndex((x) => x.id === id);
     if (index !== -1) {
-      cartItems[index].quantity = quantity;
+      const currentQuantity = cartItems[index].quantity;
+      cartItems[index].quantity =
+        currentQuantity + quantity > 1 ? currentQuantity + quantity : 1;
       this.cartItems.next(cartItems);
     }
   }
@@ -43,5 +45,11 @@ export class CartService {
       cartItems.splice(index, 1);
       this.cartItems.next(cartItems);
     }
+  }
+
+  getCartItemsTotalCost(): number {
+    return this.cartItems
+      .getValue()
+      .reduce((total, item) => total + item.price * item.quantity, 0);
   }
 }

@@ -21,23 +21,24 @@ export const functionDescription: FunctionDeclarationsTool = {
       description: `Clears the user's cart and removes all the items from the cart.`,
     },
     {
+      name: 'updateCart',
+      description: `Updates the quantity of an existing item in the user's cart.
+                    Either removing some quantity form existing cart item or add more quantity.
+                    `,
+      parameters: Schema.object({
+        properties: {
+          id: Schema.number({ description: 'The ID of the item.' }),
+          quantity: Schema.number({ description: 'The quantity of the item.' }),
+        },
+      }) as ObjectSchemaInterface,
+    },
+    {
       name: 'removeFromCart',
       description: `Removes an item from the user's cart.
                     The item has an ID.`,
       parameters: Schema.object({
         properties: {
           id: Schema.number({ description: 'The ID of the item.' }),
-        },
-      }) as ObjectSchemaInterface,
-    },
-    {
-      name: 'updateCart',
-      description: `Updates the quantity of an existing item in the user's cart.
-                    `,
-      parameters: Schema.object({
-        properties: {
-          id: Schema.number({ description: 'The ID of the item.' }),
-          quantity: Schema.number({ description: 'The quantity of the item.' }),
         },
       }) as ObjectSchemaInterface,
     },
@@ -59,6 +60,10 @@ export const functionDescription: FunctionDeclarationsTool = {
           image: Schema.string({ description: 'The image URL of the item.' }),
         },
       }) as ObjectSchemaInterface,
+    },
+    {
+      name: 'getCartItemsTotalCost',
+      description: `Returns the total cost of all items in the user's cart.`,
     },
   ],
 };
