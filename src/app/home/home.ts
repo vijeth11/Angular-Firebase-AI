@@ -38,6 +38,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
         this.isLoading.set(true);
       } else {
         this.isLoading.set(false);
+        this.scrollToBottom();
         if (this.messageSubscription$) this.messageSubscription$.unsubscribe();
         this.messageSubscription$ = undefined;
       }
