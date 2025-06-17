@@ -14,6 +14,9 @@ export class CartService {
     return this.cartItems.asObservable();
   }
 
+  getCartItemsForAI(): CartItem[] {
+    return this.cartItems.getValue();
+  }
   addToCart(item: CartItem) {
     const cartItems = this.cartItems.getValue();
     cartItems.push(item);
@@ -29,8 +32,8 @@ export class CartService {
     }
   }
 
-  resetCart(items: CartItem[]) {
-    this.cartItems.next(items);
+  resetCart() {
+    this.cartItems.next([]);
   }
 
   removeFromCart(id: number) {

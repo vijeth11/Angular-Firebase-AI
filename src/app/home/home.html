@@ -23,8 +23,8 @@
       class="col-4 bg-light border-start d-flex flex-column"
       style="height: 100%"
     >
-      <div class="chat-messages flex-grow-1 overflow-auto p-3">
-        @for(msg of messages(); track msg){
+      <div class="chat-messages flex-grow-1 overflow-auto p-3" #chatContainer>
+        @for(msg of (messages | async); track msg){
         <div
           class="mb-2 d-flex"
           [ngClass]="{'justify-content-end':msg.from == 'User','justify-content-start':msg.from=='AI'}"
@@ -34,6 +34,16 @@
             [ngClass]="{'alert-primary':msg.from == 'User','alert-warning':msg.from=='AI'}"
           >
             {{ msg.message }}
+          </div>
+        </div>
+        }
+        <!--Message Loading symbol-->
+        @if(isLoading()) {
+        <div class="mb-2 d-flex justify-content-start">
+          <div class="chat-loader">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
           </div>
         </div>
         }

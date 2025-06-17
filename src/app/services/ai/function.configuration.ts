@@ -17,6 +17,10 @@ export const functionDescription: FunctionDeclarationsTool = {
                     Each item has an ID, name, price, quantity, and image URL.`,
     },
     {
+      name: 'resetCart',
+      description: `Clears the user's cart and removes all the items from the cart.`,
+    },
+    {
       name: 'removeFromCart',
       description: `Removes an item from the user's cart.
                     The item has an ID.`,

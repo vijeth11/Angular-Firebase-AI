@@ -13,13 +13,24 @@ import { ProductService } from '../products/product.service';
 import { CartService } from '../cartService/cart.service';
 import { functionDescription } from './function.configuration';
 import { CartItem } from '../../models/cartItem';
-
+import { BehaviorSubject, Observable } from 'rxjs';
+export interface Message {
+  from: 'AI' | 'User';
+  message: string;
+}
 @Injectable({
   providedIn: 'root',
 })
 export class Ai {
   private model: GenerativeModel | undefined;
   chat: ChatSession | undefined;
+  private chatMessages = new BehaviorSubject<Message[]>([
+    {
+      from: 'AI',
+      message: 'Hello! How can I help you today?',
+    },
+  ]);
+
   constructor(
     @Inject('FIREBASE_APP') private firebaseApp: FirebaseApp,
     private productService: ProductService,
@@ -32,11 +43,23 @@ export class Ai {
       const ai = getAI(this.firebaseApp, { backend: new GoogleAIBackend() });
 
       // System Instructions
-      const agenDescription = `
+      const agenDescription =
+        `
         Welcome to Angular Groceries. You are a super agent who will help the users
         with the information of available products and also add them to the cart or
         update the cart with the user requested products.
-      `;
+
+        These are the Product Details:-
+
+      ` +
+        this.productService.getProducts().map((product) => {
+          return `
+        Name: ${product.name}
+        Price: ${product.price}
+        Description: ${product.description}
+        Image: ${product.image}
+        `;
+        });
       // Create a `GenerativeModel` instance with a model that supports your use case
       this.model = getGenerativeModel(ai, {
         model: 'gemini-2.0-flash',
@@ -58,56 +81,75 @@ export class Ai {
     return '';
   }
 
-  startChat() {
+  public startChat() {
     if (this.model) {
       this.chat = this.model.startChat();
     }
   }
 
-  async sendMessage(prompt: string | Array<string | Part>): Promise<string> {
+  public getMessages(): Observable<Message[]> {
+    return this.chatMessages.asObservable();
+  }
+
+  public async promptChatMessage(prompt: Message) {
+    this.chatMessages.next([...this.chatMessages.getValue(), prompt]);
+    let response = await this.sendMessage(prompt.message);
+    this.chatMessages.next([
+      ...this.chatMessages.getValue(),
+      { from: 'AI', message: response },
+    ]);
+  }
+
+  private async sendMessage(
+    prompt: string | Array<string | Part>
+  ): Promise<string> {
     if (this.chat) {
       let result = await this.chat.sendMessage(prompt);
       const functionCalls = result.response.functionCalls();
-      let functionCall;
-      let functionResult;
+      let functionCall = [];
+      let functionResult = [];
       // When the model responds with one or more function calls, invoke the function(s).
       if (functionCalls && functionCalls.length > 0) {
         for (const call of functionCalls) {
+          let result;
           switch (call.name) {
             case functionDescription.functionDeclarations![0].name:
-              functionResult = this.productService.getProducts();
+              result = this.productService.getProducts();
               break;
             case functionDescription.functionDeclarations![1].name:
-              functionResult = this.cartService.getCartItems();
+              result = this.cartService.getCartItemsForAI();
               break;
             case functionDescription.functionDeclarations![2].name:
-              functionResult = this.cartService.removeFromCart(
+              result = this.cartService.resetCart();
+              break;
+            case functionDescription.functionDeclarations![3].name:
+              result = this.cartService.removeFromCart(
                 (call.args as { id: number }).id
               );
               break;
-            case functionDescription.functionDeclarations![3].name:
-              let data = call.args as { id: number; quantity: number };
-              functionResult = this.cartService.updateCartItem(
-                data.id,
-                data.quantity
-              );
-              break;
             case functionDescription.functionDeclarations![4].name:
-              functionResult = this.cartService.addToCart(
-                call.args as CartItem
-              );
+              let data = call.args as { id: number; quantity: number };
+              result = this.cartService.updateCartItem(data.id, data.quantity);
+              break;
+            case functionDescription.functionDeclarations![5].name:
+              result = this.cartService.addToCart(call.args as CartItem);
               break;
           }
-          functionCall = call;
+          functionResult.push(result);
+          functionCall.push(call);
         }
-        return await this.sendMessage([
-          {
-            functionResponse: {
-              name: functionCall!.name, // "fetchProducts"
-              response: { products: functionResult! },
-            },
-          },
-        ]);
+
+        // Send the function responses back to the model with results
+        return await this.sendMessage(
+          functionCall.map((call, index) => {
+            return {
+              functionResponse: {
+                name: call.name, // "fetchProducts"
+                response: { result: functionResult[index] },
+              },
+            };
+          })
+        );
       } else {
         return result.response.text();
       }

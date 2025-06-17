@@ -54,10 +54,6 @@ export class CartComponent implements OnInit {
     );
   }
 
-  saveCart() {
-    this.cartItemService.resetCart(this.cartItems);
-  }
-
   proceedToShipping() {
     if (this.cartItems.length > 0) {
       this.router.navigate(['/shipping']);

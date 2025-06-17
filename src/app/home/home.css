@@ -8,3 +8,40 @@
 .container-fluid {
   height: 100%;
 }
+
+.chat-loader {
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+
+.chat-loader .dot {
+  height: 10px;
+  width: 10px;
+  margin: 0 3px;
+  background-color: #007bff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: chat-bounce 1.4s infinite both;
+}
+
+.chat-loader .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.chat-loader .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes chat-bounce {
+
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+
+  40% {
+    transform: scale(1.0);
+  }
+}
